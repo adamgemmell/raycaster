@@ -2,5 +2,7 @@
 name = "raycaster"
 version = "0.1.0"
 authors = ["adamgemmell <gemmell.adam+github@gmail.com>"]
+build = "build.rs"
 
 [dependencies]
+sdl2 = "0.31"
