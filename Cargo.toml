@@ -5,4 +5,8 @@ authors = ["adamgemmell <gemmell.adam+github@gmail.com>"]
 build = "build.rs"
 
 [dependencies]
-sdl2 = "0.31"
+
+[dependencies.sdl2]
+version = "0.31"
+default-features = false
+features = ["bundled"]
