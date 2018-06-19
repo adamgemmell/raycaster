@@ -5,7 +5,6 @@ authors = ["adamgemmell <gemmell.adam+github@gmail.com>"]
 build = "build.rs"
 
 [dependencies]
-num = "0.1"
 
 [dependencies.sdl2]
 version = "0.31"

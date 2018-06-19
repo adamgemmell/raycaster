@@ -1,5 +1,4 @@
 extern crate sdl2;
-extern crate num;
 
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
@@ -9,11 +8,11 @@ use sdl2::render::WindowCanvas;
 
 use std::time::Duration;
 
-const SCREEN_WIDTH: u32 = 100;
-const SCREEN_HEIGHT: u32 = 75;
+const SCREEN_WIDTH: u32 = 200;
+const SCREEN_HEIGHT: u32 = 150;
 
 // Each pixel is n x n screen pixels
-const SCREEN_SCALE: u32 = 8;
+const SCREEN_SCALE: u32 = 4;
 
 const SCREEN_WIDTH_PIX: u32 = SCREEN_WIDTH * SCREEN_SCALE;
 const SCREEN_HEIGHT_PIX: u32 = SCREEN_HEIGHT * SCREEN_SCALE;
@@ -55,8 +54,8 @@ pub fn main() {
 
         canvas.set_draw_color(Color::RGB(255, 160, 0));
 
-        for x in num::range_step(0, SCREEN_WIDTH_PIX, SCREEN_SCALE) {
-            draw_col(&mut canvas, x as i32, x / 2);
+        for x in 0..SCREEN_WIDTH {
+            draw_col(&mut canvas, x, x/2);
         } 
 
         canvas.present();
@@ -65,7 +64,10 @@ pub fn main() {
     }
 }
 
-fn draw_col(canvas: &mut WindowCanvas, x: i32, height: u32) -> () {
-        canvas.fill_rect(Rect::new(x, (SCREEN_YMID as i32) - (height as i32/2), SCREEN_SCALE, height))
+// x & height in logical pixels
+fn draw_col(canvas: &mut WindowCanvas, x: u32, height: u32) -> () {
+        let x_real = x * SCREEN_SCALE;
+        let h_real = height * SCREEN_SCALE;
+        canvas.fill_rect(Rect::new(x_real as i32, (SCREEN_YMID as i32) - (h_real as i32/2), SCREEN_SCALE, h_real))
         .expect("Error drawing screen column");
 }
