@@ -27,5 +27,8 @@ tags
 # End of https://www.gitignore.io/api/vim,rust
 
 /*.dll
-gnu-mingw
-msvc
+/gnu-mingw/
+/msvc/
+
+/.idea/
+*.iml
