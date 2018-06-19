@@ -5,18 +5,9 @@ use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 use sdl2::render::WindowCanvas;
-
 use std::time::Duration;
 
-const SCREEN_WIDTH: u32 = 200;
-const SCREEN_HEIGHT: u32 = 150;
-
-// Each pixel is n x n screen pixels
-const SCREEN_SCALE: u32 = 4;
-
-const SCREEN_WIDTH_PIX: u32 = SCREEN_WIDTH * SCREEN_SCALE;
-const SCREEN_HEIGHT_PIX: u32 = SCREEN_HEIGHT * SCREEN_SCALE;
-const SCREEN_YMID: u32 = SCREEN_HEIGHT_PIX/2;
+mod options;
 
 pub fn main() {
     let sdl_context = sdl2::init().expect("Unable to initialise SDL");
@@ -24,7 +15,8 @@ pub fn main() {
         .video()
         .expect("Unable to initialise video subsystem");
 
-    let window = video_subsystem.window("Raycaster Engine", SCREEN_WIDTH_PIX, SCREEN_HEIGHT_PIX)
+    let window = video_subsystem.window("Raycaster Engine",
+                    options::SCREEN_WIDTH_PIX, options::SCREEN_HEIGHT_PIX)
         .position_centered()
         .opengl()
         .build()
@@ -54,7 +46,9 @@ pub fn main() {
 
         canvas.set_draw_color(Color::RGB(255, 160, 0));
 
-        for x in 0..SCREEN_WIDTH {
+        for x in 0..options::SCREEN_WIDTH {
+            let (r, g, b)= options::COLOURS[x as usize %options::COLOURS.len()][0];
+            canvas.set_draw_color(Color::RGB(r, g, b));
             draw_col(&mut canvas, x, x/2);
         } 
 
@@ -66,8 +60,9 @@ pub fn main() {
 
 // x & height in logical pixels
 fn draw_col(canvas: &mut WindowCanvas, x: u32, height: u32) -> () {
-        let x_real = x * SCREEN_SCALE;
-        let h_real = height * SCREEN_SCALE;
-        canvas.fill_rect(Rect::new(x_real as i32, (SCREEN_YMID as i32) - (h_real as i32/2), SCREEN_SCALE, h_real))
+        let x_real = x * options::SCREEN_SCALE;
+        let h_real = height * options::SCREEN_SCALE;
+        canvas.fill_rect(Rect::new(x_real as i32, (options::SCREEN_YMID as i32) - (h_real as
+            i32/2), options::SCREEN_SCALE, h_real))
         .expect("Error drawing screen column");
 }
