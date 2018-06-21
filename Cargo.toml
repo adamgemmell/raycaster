@@ -5,6 +5,7 @@ authors = ["adamgemmell <gemmell.adam+github@gmail.com>"]
 build = "build.rs"
 
 [dependencies]
+cgmath = "0.16"
 
 [dependencies.sdl2]
 version = "0.31"

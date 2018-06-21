@@ -1,4 +1,5 @@
 extern crate sdl2;
+extern crate cgmath;
 
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
@@ -6,8 +7,13 @@ use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 use sdl2::render::WindowCanvas;
 use std::time::Duration;
+use cgmath::prelude::*;
+use cgmath::Vector2;
+use cgmath::vec2;
+use player::PlayerState;
 
 mod options;
+mod player;
 
 pub fn main() {
     let sdl_context = sdl2::init().expect("Unable to initialise SDL");
@@ -31,12 +37,24 @@ pub fn main() {
     let mut event_pump = sdl_context.event_pump()
         .expect("Unable to initialise event pump");
 
+    let mut ps = PlayerState::new();
+
+    let mut plane = vec2(0.0, 0.66);
+
+    //let mut time = 0u32;        // Time of current frame
+    //let mut old_time = 0u32;    // Time of prev frame
+
     'running: loop {
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit { .. }
-                | Event::KeyDown {
-                    keycode: Some(Keycode::Escape), ..} => break 'running,
+                | Event::KeyDown {keycode: Some(Keycode::Escape), ..} => break 'running,
+                | Event::KeyDown {keycode: Some(Keycode::Up), ..} => ps.move_player(0),
+                | Event::KeyDown {keycode: Some(Keycode::Down), ..} => ps.move_player(2),
+                | Event::KeyDown {keycode: Some(Keycode::Left), ..} => ps.move_player(3),
+                | Event::KeyDown {keycode: Some(Keycode::Right), ..} => ps.move_player(1),
+                | Event::KeyDown {keycode: Some(Keycode::E), ..} => ps.adjust_dir(0.01),
+                | Event::KeyDown {keycode: Some(Keycode::Q), ..} => ps.adjust_dir(-0.01),
                 _ => {}
             }
         }
@@ -46,10 +64,62 @@ pub fn main() {
 
         canvas.set_draw_color(Color::RGB(255, 160, 0));
 
+
+        // Render
         for x in 0..options::SCREEN_WIDTH {
-            let (r, g, b)= options::COLOURS[x as usize %options::COLOURS.len()][0];
+            let cam_x = 2.0*(x as f64)/(options::SCREEN_WIDTH as f64) -1.0;
+            let ray_dir = ps.dir + plane*cam_x;
+
+            let mut map_pos = vec2(ps.pos.x.floor() as i32, ps.pos.y.floor() as i32);
+
+            let delta_dist: Vector2<f64> = vec2(1.0/ray_dir.x.abs(), 1.0/ray_dir.y.abs());
+
+            let mut colour = 0usize;
+            let mut is_vert_side = false;
+
+            let mut step = vec2(1, 1);
+
+            let side_dist_x = if ray_dir.x < 0.0 {
+                step.x = -1;
+                (ps.pos.x - map_pos.x as f64)*delta_dist.x
+            } else {
+                (map_pos.x as f64 + 1.0 - ps.pos.x)*delta_dist.x
+            };
+
+            let side_dist_y = if ray_dir.y < 0.0 {
+                step.y = -1;
+                (ps.pos.y-map_pos.y as f64)*delta_dist.y
+            } else{
+                (map_pos.y as f64 + 1.0 - ps.pos.y)*delta_dist.y
+            };
+
+            let mut side_dist = vec2(side_dist_x, side_dist_y);
+
+            // DDA
+            while colour == 0 {
+                if side_dist.x < side_dist.y {
+                    side_dist.x += delta_dist.x;
+                    map_pos.x += step.x;
+                    is_vert_side = true;
+                } else {
+                    side_dist.y += delta_dist.y;
+                    map_pos.y += step.y;
+                    is_vert_side = false;
+                }
+
+                colour = options::MAP[map_pos.x as usize][map_pos.y as usize];
+            }
+
+            let perp_wall_dist = if is_vert_side {
+                (map_pos.x as f64 - ps.pos.x + ((1-step.x)/2) as f64) / ray_dir.x
+            } else {
+                (map_pos.y as f64 - ps.pos.y + ((1-step.y)/2) as f64) / ray_dir.y
+            };
+
+            let (r, g, b)= options::COLOURS[colour-1][is_vert_side as usize];
             canvas.set_draw_color(Color::RGB(r, g, b));
-            draw_col(&mut canvas, x, x/2);
+            draw_col(&mut canvas, x, ((options::SCREEN_HEIGHT as f64/perp_wall_dist) as u32).min
+            (options::SCREEN_HEIGHT));
         } 
 
         canvas.present();
