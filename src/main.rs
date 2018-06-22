@@ -12,6 +12,9 @@ use cgmath::Vector2;
 use cgmath::vec2;
 use player::PlayerState;
 
+use std::time::SystemTime;
+use std::time;
+
 mod options;
 mod player;
 
@@ -41,18 +44,20 @@ pub fn main() {
 
     let mut plane = vec2(0.0, 0.66);
 
-    //let mut time = 0u32;        // Time of current frame
-    //let mut old_time = 0u32;    // Time of prev frame
+    let mut time = 0u64;            // Time of current frame
+    let mut old_time = 0u64;        // Time of prev frame
+    let mut frame_time = 0.0f64;    // Frame time (secs)
 
     'running: loop {
+
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit { .. }
                 | Event::KeyDown {keycode: Some(Keycode::Escape), ..} => break 'running,
-                | Event::KeyDown {keycode: Some(Keycode::Up), ..} => ps.move_player(0),
-                | Event::KeyDown {keycode: Some(Keycode::Down), ..} => ps.move_player(2),
-                | Event::KeyDown {keycode: Some(Keycode::Left), ..} => ps.move_player(3),
-                | Event::KeyDown {keycode: Some(Keycode::Right), ..} => ps.move_player(1),
+                | Event::KeyDown {keycode: Some(Keycode::W), ..} => ps.add_impulse(0, frame_time),
+                | Event::KeyDown {keycode: Some(Keycode::S), ..} => ps.add_impulse(2, frame_time),
+                | Event::KeyDown {keycode: Some(Keycode::A), ..} => ps.add_impulse(3, frame_time),
+                | Event::KeyDown {keycode: Some(Keycode::D), ..} => ps.add_impulse(1, frame_time),
                 | Event::KeyDown {keycode: Some(Keycode::E), ..} => ps.adjust_dir(0.01),
                 | Event::KeyDown {keycode: Some(Keycode::Q), ..} => ps.adjust_dir(-0.01),
                 _ => {}
@@ -63,6 +68,8 @@ pub fn main() {
         canvas.clear();
 
         canvas.set_draw_color(Color::RGB(255, 160, 0));
+
+        ps.walk(frame_time);
 
 
         // Render
@@ -118,14 +125,31 @@ pub fn main() {
 
             let (r, g, b)= options::COLOURS[colour-1][is_vert_side as usize];
             canvas.set_draw_color(Color::RGB(r, g, b));
-            draw_col(&mut canvas, x, ((options::SCREEN_HEIGHT as f64/perp_wall_dist) as u32).min
-            (options::SCREEN_HEIGHT));
+            draw_col(&mut canvas, x, ((options::SCREEN_HEIGHT as f64/perp_wall_dist) as u32)
+                .min(options::SCREEN_HEIGHT));
         } 
 
         canvas.present();
 
-        std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
+        //std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 120));
+
+        let (ass, dicks) = calc_frametime(old_time);
+        old_time = time;
+        time = ass;
+        frame_time = dicks;
+        println!("FPS: {}", 1.0/frame_time);
     }
+}
+
+fn calc_frametime(old_time: u64) -> (u64, f64) {
+    let since_epoch = SystemTime::now()
+        .duration_since(time::UNIX_EPOCH)
+        .expect("System time reading failed");
+    let time = since_epoch.as_secs()*1_000_000_000+(since_epoch.subsec_nanos() as u64);
+
+    let frame_time: f64 = (time - old_time) as f64 / 1_000_000_000.0;
+
+    (time, frame_time)
 }
 
 // x & height in logical pixels

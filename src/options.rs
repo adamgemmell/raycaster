@@ -1,9 +1,9 @@
-pub const SCREEN_WIDTH: u32 = 300;
+pub const SCREEN_WIDTH: u32 = 800;
 
-pub const SCREEN_HEIGHT: u32 = 200;
+pub const SCREEN_HEIGHT: u32 = 600;
 
 // Each pixel is n x n screen pixels
-pub const SCREEN_SCALE: u32 = 4;
+pub const SCREEN_SCALE: u32 = 1;
 
 pub const SCREEN_WIDTH_PIX: u32 = SCREEN_WIDTH * SCREEN_SCALE;
 pub const SCREEN_HEIGHT_PIX: u32 = SCREEN_HEIGHT * SCREEN_SCALE;
@@ -12,8 +12,8 @@ pub const SCREEN_YMID: u32 = SCREEN_HEIGHT_PIX / 2;
 pub const MAP_WIDTH: usize = 25;
 pub const MAP_LENGTH: usize = 25;
 
-pub const START_X: f64 = 10.1;
-pub const START_Y: f64 = 10.1;
+pub const START_X: f64 = 10.5;
+pub const START_Y: f64 = 10.5;
 
 // 0 is empty, n is colour n-1
 pub const MAP: [[usize; MAP_WIDTH]; MAP_LENGTH] = [
