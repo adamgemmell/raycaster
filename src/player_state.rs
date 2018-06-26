@@ -8,11 +8,11 @@ use self::cgmath::Rad;
 use std::f64::consts::PI;
 
 // blocks/sec^2
-const ACCEL: f64 = 100.0;
+const ACCEL: f64 = 15.0;
 // blocks/sec
-const MAX_VEL: f64 = 50.0;
+const MAX_VEL: f64 = 15.0;
 
-const FRICTION: f64 = 300.0;
+const FRICTION: f64 = 6.0;
 
 pub struct PlayerState {
     pub pos: Vector2<f64>,
@@ -63,11 +63,13 @@ impl PlayerState {
         let old_speed = self.vel.magnitude().min(MAX_VEL);
         let speed = (old_speed - old_speed * FRICTION * time).max(0.0);
 
-        if speed == 0.0 {
-            self.vel = vec2(0.0, 0.0);
+        println!("{} {}", old_speed, speed);
+
+        self.vel = if speed == 0.0 {
+            vec2(0.0, 0.0)
         } else {
-            self.vel.normalize_to(speed);
-        }
+            self.vel.normalize_to(speed)
+        };
 
         let future_pos = self.pos + self.vel * time;
 

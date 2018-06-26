@@ -5,13 +5,11 @@ use player_state::PlayerState;
 use screen::Screen;
 use sdl2::event::Event;
 use sdl2::EventPump;
-use sdl2::keyboard::Keycode;
+use sdl2::keyboard::{Keycode, Scancode};
 use sdl2::pixels::Color;
-use self::cgmath::vec2;
-use self::cgmath::Vector2;
+use self::cgmath::{vec2, Vector2};
 use std::time;
-use std::time::SystemTime;
-use std::time::Duration;
+use std::time::{SystemTime, Duration};
 
 pub struct Game {
     ps: PlayerState,
@@ -40,14 +38,20 @@ impl Game {
                 match event {
                     Event::Quit { .. }
                     | Event::KeyDown { keycode: Some(Keycode::Escape), .. } => break 'running,
-                    | Event::KeyDown { keycode: Some(Keycode::W), .. } => self.ps.add_impulse(0, frame_time),
-                    | Event::KeyDown { keycode: Some(Keycode::S), .. } => self.ps.add_impulse(2, frame_time),
-                    | Event::KeyDown { keycode: Some(Keycode::A), .. } => self.ps.add_impulse(3, frame_time),
-                    | Event::KeyDown { keycode: Some(Keycode::D), .. } => self.ps.add_impulse(1, frame_time),
-                    | Event::KeyDown { keycode: Some(Keycode::E), .. } => self.ps.adjust_dir(0.01),
-                    | Event::KeyDown { keycode: Some(Keycode::Q), .. } => self.ps.adjust_dir(-0.01),
                     _ => {}
                 }
+            }
+
+
+            {
+                let ep = &self.event_pump;
+
+                if ep.keyboard_state().is_scancode_pressed(Scancode::W) {self.ps.add_impulse(0, frame_time)};
+                if ep.keyboard_state().is_scancode_pressed(Scancode::S) {self.ps.add_impulse(2, frame_time)};
+                if ep.keyboard_state().is_scancode_pressed(Scancode::A) {self.ps.add_impulse(3, frame_time)};
+                if ep.keyboard_state().is_scancode_pressed(Scancode::D) {self.ps.add_impulse(1, frame_time)};
+                if ep.keyboard_state().is_scancode_pressed(Scancode::Q) {self.ps.adjust_dir(-0.01)};
+                if ep.keyboard_state().is_scancode_pressed(Scancode::E) {self.ps.adjust_dir(0.01)};
             }
 
             self.screen.set_draw_colour(Color::RGB(0, 0, 0));
@@ -58,7 +62,7 @@ impl Game {
             self.render();
             self.screen.present();
 
-            let frame_time_nanos = (frame_time*1_000_000_000f64) as u32;
+            //let frame_time_nanos = (frame_time*1_000_000_000f64) as u32;
             //if frame_time_nanos < target_frame_time {
                 //::std::thread::sleep(Duration::new(0, target_frame_time));
             //}
