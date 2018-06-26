@@ -1,23 +1,24 @@
 extern crate cgmath;
 
-use cgmath::Rad;
-use cgmath::{Vector2, vec2};
-use cgmath::InnerSpace;
-use cgmath::{Rotation, Rotation2, Basis2};
-use std::f64::consts::PI;
 use options;
+use self::cgmath::{vec2, Vector2};
+use self::cgmath::{Basis2, Rotation, Rotation2};
+use self::cgmath::InnerSpace;
+use self::cgmath::Rad;
+use std::f64::consts::PI;
 
 // blocks/sec^2
 const ACCEL: f64 = 100.0;
 // blocks/sec
 const MAX_VEL: f64 = 50.0;
 
-const FRICTION: f64 = 100.0;
+const FRICTION: f64 = 300.0;
 
 pub struct PlayerState {
     pub pos: Vector2<f64>,
     pub dir: Vector2<f64>,
     pub vel: Vector2<f64>,
+    pub plane: Vector2<f64>,
 }
 
 impl PlayerState {
@@ -26,6 +27,7 @@ impl PlayerState {
             pos: vec2(options::START_X, options::START_Y),
             dir: vec2(-1.0, 0.0),
             vel: vec2(0.0, 0.0),
+            plane: vec2(0.0, 0.66),
         }
     }
 
@@ -67,12 +69,11 @@ impl PlayerState {
             self.vel.normalize_to(speed);
         }
 
-        let future_pos = self.pos + self.vel*time;
+        let future_pos = self.pos + self.vel * time;
 
         if options::MAP[future_pos.x as usize][future_pos.y as usize] == 0 {
             self.pos = future_pos;
         }
-
     }
 
     pub fn adjust_dir(&mut self, ang: f64) {

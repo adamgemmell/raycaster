@@ -15,6 +15,8 @@ pub const MAP_LENGTH: usize = 25;
 pub const START_X: f64 = 10.5;
 pub const START_Y: f64 = 10.5;
 
+pub const TARGET_FPS: u32 = 120;
+
 // 0 is empty, n is colour n-1
 pub const MAP: [[usize; MAP_WIDTH]; MAP_LENGTH] = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
