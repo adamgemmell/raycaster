@@ -1,3 +1,4 @@
+use cgmath::{vec2, Vector2};
 use options;
 use player_state::PlayerState;
 use screen::Screen;
@@ -5,9 +6,8 @@ use sdl2::event::Event;
 use sdl2::EventPump;
 use sdl2::keyboard::{Keycode, Scancode};
 use sdl2::pixels::Color;
-use cgmath::{vec2, Vector2};
 use std::time;
-use std::time::{SystemTime, Duration};
+use std::time::{Duration, SystemTime};
 
 pub struct Game {
     ps: PlayerState,
@@ -29,7 +29,7 @@ impl Game {
         let mut old_time = 0u64;        // Time of prev frame (nanos)
         let mut frame_time = 0.0f64;    // Frame time (secs)
 
-        let target_frame_time = 1_000_000_000u32/options::TARGET_FPS;    // nanos
+        let target_frame_time = 1_000_000_000u32 / options::TARGET_FPS;    // nanos
 
         'running: loop {
             for event in self.event_pump.poll_iter() {
@@ -44,12 +44,12 @@ impl Game {
             {
                 let ep = &self.event_pump;
 
-                if ep.keyboard_state().is_scancode_pressed(Scancode::W) {self.ps.add_impulse(0, frame_time)};
-                if ep.keyboard_state().is_scancode_pressed(Scancode::S) {self.ps.add_impulse(2, frame_time)};
-                if ep.keyboard_state().is_scancode_pressed(Scancode::A) {self.ps.add_impulse(3, frame_time)};
-                if ep.keyboard_state().is_scancode_pressed(Scancode::D) {self.ps.add_impulse(1, frame_time)};
-                if ep.keyboard_state().is_scancode_pressed(Scancode::Q) {self.ps.adjust_dir(frame_time, false)};
-                if ep.keyboard_state().is_scancode_pressed(Scancode::E) {self.ps.adjust_dir(frame_time, true)};
+                if ep.keyboard_state().is_scancode_pressed(Scancode::W) { self.ps.add_impulse(0, frame_time) };
+                if ep.keyboard_state().is_scancode_pressed(Scancode::S) { self.ps.add_impulse(2, frame_time) };
+                if ep.keyboard_state().is_scancode_pressed(Scancode::A) { self.ps.add_impulse(3, frame_time) };
+                if ep.keyboard_state().is_scancode_pressed(Scancode::D) { self.ps.add_impulse(1, frame_time) };
+                if ep.keyboard_state().is_scancode_pressed(Scancode::Q) { self.ps.adjust_dir(frame_time, false) };
+                if ep.keyboard_state().is_scancode_pressed(Scancode::E) { self.ps.adjust_dir(frame_time, true) };
             }
 
             self.screen.set_draw_colour(Color::RGB(0, 0, 0));
@@ -66,9 +66,9 @@ impl Game {
             frame_time = new_frame_time;
             println!("FPS: {}", 1.0 / frame_time);
 
-            let frame_time_nanos = (frame_time*1_000_000_000f64) as u32;
+            let frame_time_nanos = (frame_time * 1_000_000_000f64) as u32;
             if frame_time_nanos < target_frame_time {
-                ::std::thread::sleep(Duration::new(0, target_frame_time-frame_time_nanos));
+                ::std::thread::sleep(Duration::new(0, target_frame_time - frame_time_nanos));
             }
         }
     }

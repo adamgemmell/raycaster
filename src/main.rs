@@ -1,5 +1,5 @@
-extern crate sdl2;
 extern crate cgmath;
+extern crate sdl2;
 
 use game::Game;
 use screen::Screen;
