@@ -13,6 +13,8 @@ const ACCEL: f64 = 15.0;
 const MAX_VEL: f64 = 15.0;
 
 const FRICTION: f64 = 6.0;
+// rads/sec
+const TURN_VEL: f64 = 1.5;
 
 pub struct PlayerState {
     pub pos: Vector2<f64>,
@@ -63,8 +65,6 @@ impl PlayerState {
         let old_speed = self.vel.magnitude().min(MAX_VEL);
         let speed = (old_speed - old_speed * FRICTION * time).max(0.0);
 
-        println!("{} {}", old_speed, speed);
-
         self.vel = if speed == 0.0 {
             vec2(0.0, 0.0)
         } else {
@@ -78,7 +78,15 @@ impl PlayerState {
         }
     }
 
-    pub fn adjust_dir(&mut self, ang: f64) {
-        //TODO
+    // time: secs
+    pub fn adjust_dir(&mut self, time: f64, clockwise: bool) {
+        let ang = if clockwise {
+            -1.0 * TURN_VEL * time
+        } else {
+            TURN_VEL * time
+        };
+        let rotation: Basis2<f64> = Rotation2::from_angle(Rad(ang));
+        self.dir = rotation.rotate_vector(self.dir);
+        self.plane = rotation.rotate_vector(self.plane);
     }
 }

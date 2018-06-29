@@ -50,8 +50,8 @@ impl Game {
                 if ep.keyboard_state().is_scancode_pressed(Scancode::S) {self.ps.add_impulse(2, frame_time)};
                 if ep.keyboard_state().is_scancode_pressed(Scancode::A) {self.ps.add_impulse(3, frame_time)};
                 if ep.keyboard_state().is_scancode_pressed(Scancode::D) {self.ps.add_impulse(1, frame_time)};
-                if ep.keyboard_state().is_scancode_pressed(Scancode::Q) {self.ps.adjust_dir(-0.01)};
-                if ep.keyboard_state().is_scancode_pressed(Scancode::E) {self.ps.adjust_dir(0.01)};
+                if ep.keyboard_state().is_scancode_pressed(Scancode::Q) {self.ps.adjust_dir(frame_time, false)};
+                if ep.keyboard_state().is_scancode_pressed(Scancode::E) {self.ps.adjust_dir(frame_time, true)};
             }
 
             self.screen.set_draw_colour(Color::RGB(0, 0, 0));
