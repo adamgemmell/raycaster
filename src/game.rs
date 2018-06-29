@@ -1,5 +1,3 @@
-extern crate cgmath;
-
 use options;
 use player_state::PlayerState;
 use screen::Screen;
@@ -7,7 +5,7 @@ use sdl2::event::Event;
 use sdl2::EventPump;
 use sdl2::keyboard::{Keycode, Scancode};
 use sdl2::pixels::Color;
-use self::cgmath::{vec2, Vector2};
+use cgmath::{vec2, Vector2};
 use std::time;
 use std::time::{SystemTime, Duration};
 
@@ -62,16 +60,16 @@ impl Game {
             self.render();
             self.screen.present();
 
-            //let frame_time_nanos = (frame_time*1_000_000_000f64) as u32;
-            //if frame_time_nanos < target_frame_time {
-                //::std::thread::sleep(Duration::new(0, target_frame_time));
-            //}
-
             let (new_time, new_frame_time) = calc_frametime(old_time);
             old_time = time;
             time = new_time;
             frame_time = new_frame_time;
             println!("FPS: {}", 1.0 / frame_time);
+
+            let frame_time_nanos = (frame_time*1_000_000_000f64) as u32;
+            if frame_time_nanos < target_frame_time {
+                ::std::thread::sleep(Duration::new(0, target_frame_time-frame_time_nanos));
+            }
         }
     }
 
