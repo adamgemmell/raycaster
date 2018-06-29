@@ -1,6 +1,6 @@
-pub const SCREEN_WIDTH: u32 = 1920;
+pub const SCREEN_WIDTH: u32 = 1280;
 
-pub const SCREEN_HEIGHT: u32 = 1080;
+pub const SCREEN_HEIGHT: u32 = 720;
 
 // Each pixel is n x n screen pixels
 pub const SCREEN_SCALE: u32 = 1;
