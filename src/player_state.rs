@@ -73,8 +73,11 @@ impl PlayerState {
 
         let future_pos = self.pos + self.vel * time;
 
-        if options::MAP[future_pos.x as usize][future_pos.y as usize] == 0 {
-            self.pos = future_pos;
+        if options::MAP[future_pos.x as usize][self.pos.y as usize] == 0 {
+            self.pos.x = future_pos.x;
+        }
+        if options::MAP[self.pos.x as usize][future_pos.y as usize] == 0 {
+            self.pos.y = future_pos.y;
         }
     }
 

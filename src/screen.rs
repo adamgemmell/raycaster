@@ -1,5 +1,3 @@
-extern crate sdl2;
-
 use options;
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
