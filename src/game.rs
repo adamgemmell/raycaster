@@ -8,6 +8,7 @@ use sdl2::keyboard::{Keycode, Scancode};
 use sdl2::pixels::Color;
 use std::time;
 use std::time::{Duration, SystemTime};
+use sdl2::rect::Rect;
 
 pub struct Game {
     ps: PlayerState,
@@ -34,12 +35,10 @@ impl Game {
         'running: loop {
             for event in self.event_pump.poll_iter() {
                 match event {
-                    Event::Quit { .. }
-                    | Event::KeyDown { keycode: Some(Keycode::Escape), .. } => break 'running,
+                    Event::Quit { .. } | Event::KeyDown { keycode: Some(Keycode::Escape), .. } => break 'running,
                     _ => {}
                 }
             }
-
 
             {
                 let ep = &self.event_pump;
@@ -54,6 +53,9 @@ impl Game {
 
             self.screen.set_draw_colour(Color::RGB(0, 0, 0));
             self.screen.clear();
+            self.screen.set_draw_colour(Color::RGB(30, 30, 30));
+            self.screen.canvas.fill_rect(Rect::new(0, options::SCREEN_YMID as i32, options::SCREEN_WIDTH,
+                                                   options::SCREEN_HEIGHT/2)).expect("Rendering error");
 
             self.ps.walk(frame_time);
 

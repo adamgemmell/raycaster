@@ -4,7 +4,7 @@ use sdl2::rect::Rect;
 use sdl2::render::WindowCanvas;
 
 pub struct Screen {
-    canvas: WindowCanvas
+    pub canvas: WindowCanvas
 }
 
 impl Screen {
@@ -32,6 +32,6 @@ impl Screen {
         let h_real = height * options::SCREEN_SCALE;
         self.canvas.fill_rect(Rect::new(x_real as i32, (options::SCREEN_YMID as i32) - (h_real as
             i32 / 2), options::SCREEN_SCALE, h_real))
-            .expect("Error drawing screen column");
+            .expect("Rendering error");
     }
 }
