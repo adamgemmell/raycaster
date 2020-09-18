@@ -6,8 +6,4 @@ build = "build.rs"
 
 [dependencies]
 cgmath = "0.16"
-
-[dependencies.sdl2]
-version = "0.31"
-default-features = false
-features = ["bundled"]
+sdl2 = "0.34"
